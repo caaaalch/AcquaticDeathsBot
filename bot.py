@@ -1,7 +1,8 @@
+import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler
 
-TOKEN = "8984009440:AAEsTrFdJbOjBCD_2WJnZXIg43o6IEZNo5U"
+TOKEN = os.getenv("TOKEN")
 
 
 async def start(update: Update, context):
