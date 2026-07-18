@@ -1,11 +1,16 @@
 import os
 import re
-from telegram import Update
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
+)
 from telegram.ext import (
     Application,
     CommandHandler,
     ConversationHandler,
     MessageHandler,
+    CallbackQueryHandler,
     filters
 )
 
@@ -43,18 +48,81 @@ async def lavoro(update, context):
 
     context.user_data["lavoro"] = update.message.text
 
+    keyboard = [
+
+        [
+            InlineKeyboardButton(
+                "🔫 Sparatoria",
+                callback_data="Sparatoria"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "🗡️ Omicidio",
+                callback_data="Omicidio"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "👮 Abbattimento FdO",
+                callback_data="Abbattimento FdO"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "🪂 Caduta",
+                callback_data="Caduta"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "🔥 Incendio",
+                callback_data="Incendio"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "❓ Sconosciuta",
+                callback_data="Sconosciuta"
+            )
+        ]
+
+    ]
+
+
     await update.message.reply_text(
-        "📝 Inserisci il motivo della morte:"
+
+        "📝 Seleziona il motivo del decesso:",
+
+        reply_markup=InlineKeyboardMarkup(keyboard)
+
     )
 
     return MOTIVO
 
 async def motivo(update, context):
 
-    context.user_data["motivo"] = update.message.text
+    query = update.callback_query
 
-    await update.message.reply_text(
+    await query.answer()
+
+    context.user_data["motivo"] = query.data
+
+    await query.edit_message_text(
+
+        f"✅ Motivo selezionato: {query.data}"
+
+    )
+
+    await query.message.reply_text(
+
         "📍 Inserisci il luogo del decesso:"
+
     )
 
     return LUOGO
@@ -126,7 +194,7 @@ async def ora(update, context):
 
 
     await update.message.reply_text(
-        "✅ Dati raccolti correttamente."
+        "✅ Grazie per la segnalazione. Verra' valutata da un membro dello staff a breve."
     )
 
 
@@ -154,7 +222,7 @@ conv = ConversationHandler(
         ],
 
         MOTIVO:[
-            MessageHandler(filters.TEXT, motivo)
+            CallbackQueryHandler(motivo)
         ],
 
         LUOGO:[
