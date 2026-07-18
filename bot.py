@@ -28,10 +28,10 @@ STAFF_CHANNEL = -1004388077811
 
 
 # ==========================
-# STATI CONVERSAZIONE
+# STATI
 # ==========================
 
-NOME, LAVORO, MOTIVO, LUOGO, DATA, ORA, FOTO, CONFERMA = range(8)
+NOME, LAVORO, MOTIVO, LUOGO, DATA, ORA, ALLEGATO, CONFERMA = range(8)
 
 
 
@@ -42,16 +42,14 @@ NOME, LAVORO, MOTIVO, LUOGO, DATA, ORA, FOTO, CONFERMA = range(8)
 async def start(update: Update, context):
 
     await update.message.reply_text(
-
         "⚰️ AcquaticDeaths\n\n"
         "Usa /nuovamorte per creare una segnalazione."
-
     )
 
 
 
 # ==========================
-# NUOVA MORTE
+# NUOVA SEGNALAZIONE
 # ==========================
 
 async def nuova_morte(update: Update, context):
@@ -77,17 +75,15 @@ async def nuova_morte(update: Update, context):
 
 
 # ==========================
-# ELIMINA MESSAGGIO UTENTE
+# ELIMINA MESSAGGIO
 # ==========================
 
 async def elimina_messaggio(update):
 
     try:
-
         await update.message.delete()
 
     except:
-
         pass
 
 
@@ -111,23 +107,19 @@ async def aggiorna_messaggio(update, context, testo):
 
 
 # ==========================
-# MESSAGGIO ERRORE TEMPORANEO
+# ERRORE TEMPORANEO
 # ==========================
 
 async def errore_temporaneo(update, testo):
 
     messaggio = await update.message.reply_text(testo)
 
-
     await asyncio.sleep(3)
 
-
     try:
-
         await messaggio.delete()
 
     except:
-
         pass
     
 # ==========================
@@ -138,14 +130,12 @@ async def nome(update, context):
 
     await elimina_messaggio(update)
 
-
     context.user_data["nome"] = update.message.text
 
 
     await aggiorna_messaggio(
 
         update,
-
         context,
 
         "⚰️ AcquaticDeaths\n\n"
@@ -168,53 +158,22 @@ async def lavoro(update, context):
 
     await elimina_messaggio(update)
 
-
     context.user_data["lavoro"] = update.message.text
 
 
     tastiera = [
 
-        [
-            InlineKeyboardButton(
-                "🔫 Sparatoria",
-                callback_data="Sparatoria"
-            )
-        ],
+        [InlineKeyboardButton("🔫 Sparatoria", callback_data="Sparatoria")],
 
-        [
-            InlineKeyboardButton(
-                "🗡️ Omicidio",
-                callback_data="Omicidio"
-            )
-        ],
+        [InlineKeyboardButton("🗡️ Omicidio", callback_data="Omicidio")],
 
-        [
-            InlineKeyboardButton(
-                "👮 Abbattimento FdO",
-                callback_data="Abbattimento FdO"
-            )
-        ],
+        [InlineKeyboardButton("👮 Abbattimento FdO", callback_data="Abbattimento FdO")],
 
-        [
-            InlineKeyboardButton(
-                "🪂 Caduta",
-                callback_data="Caduta"
-            )
-        ],
+        [InlineKeyboardButton("🪂 Caduta", callback_data="Caduta")],
 
-        [
-            InlineKeyboardButton(
-                "🔥 Incendio",
-                callback_data="Incendio"
-            )
-        ],
+        [InlineKeyboardButton("🔥 Incendio", callback_data="Incendio")],
 
-        [
-            InlineKeyboardButton(
-                "❓ Sconosciuta",
-                callback_data="Sconosciuta"
-            )
-        ]
+        [InlineKeyboardButton("❓ Sconosciuta", callback_data="Sconosciuta")]
 
     ]
 
@@ -242,7 +201,7 @@ async def lavoro(update, context):
 
 
 # ==========================
-# MOTIVO BOTTONI
+# MOTIVO
 # ==========================
 
 async def motivo(update, context):
@@ -258,7 +217,6 @@ async def motivo(update, context):
     await aggiorna_messaggio(
 
         update,
-
         context,
 
         "⚰️ AcquaticDeaths\n\n"
@@ -281,14 +239,12 @@ async def luogo(update, context):
 
     await elimina_messaggio(update)
 
-
     context.user_data["luogo"] = update.message.text
 
 
     await aggiorna_messaggio(
 
         update,
-
         context,
 
         "⚰️ AcquaticDeaths\n\n"
@@ -332,8 +288,7 @@ async def data(update, context):
             update,
 
             "❌ Data non valida.\n"
-            "Usa GG/MM/AA\n"
-            "Esempio: 18/07/26"
+            "Usa GG/MM/AA"
 
         )
 
@@ -350,7 +305,6 @@ async def data(update, context):
     await aggiorna_messaggio(
 
         update,
-
         context,
 
         "⚰️ AcquaticDeaths\n\n"
@@ -389,17 +343,14 @@ async def ora(update, context):
 
         await elimina_messaggio(update)
 
-
         await errore_temporaneo(
 
             update,
 
             "❌ Ora non valida.\n"
-            "Usa HH:MM\n"
-            "Esempio: 18:30"
+            "Usa HH:MM"
 
         )
-
 
         return ORA
 
@@ -414,27 +365,17 @@ async def ora(update, context):
     tastiera = [
 
         [
-
             InlineKeyboardButton(
-
-                "📷 Invia foto",
-
-                callback_data="FOTO"
-
+                "📷 Invia foto/video",
+                callback_data="INVIA_ALLEGATO"
             )
-
         ],
 
         [
-
             InlineKeyboardButton(
-
-                "⏭️ Salta foto",
-
-                callback_data="NO_FOTO"
-
+                "⏭️ Salta allegato",
+                callback_data="SALTA_ALLEGATO"
             )
-
         ]
 
     ]
@@ -451,111 +392,102 @@ async def ora(update, context):
         "⚰️ AcquaticDeaths\n\n"
         "━━━━━━━━━━━━━━\n"
         "📊 Progresso: 7/7\n\n"
-        "📷 Foto del decesso:",
+        "📎 Allegato del decesso:",
 
         reply_markup=InlineKeyboardMarkup(tastiera)
 
     )
 
 
-    return FOTO
-
+    return ALLEGATO
 
 # ==========================
-# FOTO
+# ALLEGATO FOTO / VIDEO
 # ==========================
 
-async def foto(update, context):
+async def allegato(update, context):
 
     query = update.callback_query
 
 
-    # Se arriva dal bottone "Salta foto"
+    # Salta allegato
 
-    if query and query.data == "NO_FOTO":
+    if query and query.data == "SALTA_ALLEGATO":
 
         await query.answer()
 
+        context.user_data["allegato"] = None
 
-        context.user_data["foto"] = None
 
-
-        await mostra_conferma(
-
-            update,
-
-            context
-
-        )
+        await mostra_conferma(update, context)
 
 
         return CONFERMA
 
 
 
-    # Se arriva dal bottone "Invia foto"
+    # Richiesta allegato
 
-    if query and query.data == "FOTO":
+    if query and query.data == "INVIA_ALLEGATO":
 
         await query.answer()
 
 
         await query.edit_message_text(
 
-            "📷 Invia ora la foto del decesso."
+            "📎 Invia una foto o un video del decesso."
 
         )
 
 
-        return FOTO
+        return ALLEGATO
 
 
 
-    # Se arriva una vera foto
+    # Ricezione foto/video
 
     if update.message and (update.message.photo or update.message.video):
 
 
-    if update.message.photo:
+        if update.message.photo:
 
-        context.user_data["allegato"] = (
-            "foto",
-            update.message.photo[-1].file_id
-        )
+            context.user_data["allegato"] = (
 
+                "foto",
 
-    elif update.message.video:
+                update.message.photo[-1].file_id
 
-        context.user_data["allegato"] = (
-            "video",
-            update.message.video.file_id
-        )
+            )
 
 
-    await elimina_messaggio(update)
+        elif update.message.video:
+
+            context.user_data["allegato"] = (
+
+                "video",
+
+                update.message.video.file_id
+
+            )
 
 
-    await mostra_conferma(
-
-        update,
-
-        context
-
-    )
+        await elimina_messaggio(update)
 
 
-    return CONFERMA
+        await mostra_conferma(update, context)
+
+
+        return CONFERMA
 
 
 
-    return FOTO
-
+    return ALLEGATO
 
 
 
 
 # ==========================
-# MOSTRA CONFERMA
+# RECAP
 # ==========================
 
 async def mostra_conferma(update, context):
@@ -563,19 +495,23 @@ async def mostra_conferma(update, context):
 
     if context.user_data.get("allegato"):
 
-    tipo = context.user_data["allegato"][0]
 
-    if tipo == "foto":
+        tipo = context.user_data["allegato"][0]
 
-        stato_foto = "Foto ricevuta 📷"
+
+        if tipo == "foto":
+
+            stato = "Foto ricevuta 📷"
+
+
+        else:
+
+            stato = "Video ricevuto 🎥"
+
 
     else:
 
-        stato_foto = "Video ricevuto 🎥"
-
-else:
-
-    stato_foto = "Non ricevuta ❌"
+        stato = "Non ricevuto ❌"
 
 
 
@@ -591,7 +527,7 @@ else:
         f"📍 {context.user_data['luogo']}\n"
         f"📅 {context.user_data['data']}\n"
         f"🕒 {context.user_data['ora']}\n"
-        f"📷 Foto: {stato_foto}\n\n"
+        f"📎 Allegato: {stato}\n\n"
 
         "Confermare l'invio?"
 
@@ -627,46 +563,27 @@ else:
     ]
 
 
+    await context.bot.edit_message_text(
 
-    if update.callback_query:
+        chat_id=update.effective_chat.id,
 
+        message_id=context.user_data["messaggio_id"],
 
-        await update.callback_query.edit_message_text(
+        text=testo,
 
-            testo,
+        reply_markup=InlineKeyboardMarkup(tastiera)
 
-            reply_markup=InlineKeyboardMarkup(tastiera)
-
-        )
-
-
-    else:
-
-
-        await context.bot.edit_message_text(
-
-            chat_id=update.effective_chat.id,
-
-            message_id=context.user_data["messaggio_id"],
-
-            text=testo,
-
-            reply_markup=InlineKeyboardMarkup(tastiera)
-
-        )
-
-
+    )
 
 
 
 # ==========================
-# CONFERMA INVIO
+# CONFERMA
 # ==========================
 
 async def conferma(update, context):
 
     query = update.callback_query
-
 
     await query.answer()
 
@@ -690,7 +607,6 @@ async def conferma(update, context):
 
 
 
-
     if query.data == "INVIA":
 
 
@@ -708,18 +624,45 @@ async def conferma(update, context):
         )
 
 
-        if context.user_data.get("foto"):
+        allegato = context.user_data.get("allegato")
 
 
-            await context.bot.send_photo(
 
-                chat_id=STAFF_CHANNEL,
+        if allegato:
 
-                photo=context.user_data["foto"],
 
-                caption=testo
+            tipo, file_id = allegato
 
-            )
+
+
+            if tipo == "foto":
+
+
+                await context.bot.send_photo(
+
+                    chat_id=STAFF_CHANNEL,
+
+                    photo=file_id,
+
+                    caption=testo
+
+                )
+
+
+
+            else:
+
+
+                await context.bot.send_video(
+
+                    chat_id=STAFF_CHANNEL,
+
+                    video=file_id,
+
+                    caption=testo
+
+                )
+
 
 
         else:
@@ -746,7 +689,6 @@ async def conferma(update, context):
 
 
         return ConversationHandler.END
-
 
 
 
@@ -858,16 +800,20 @@ def main():
             ],
 
 
-            FOTO:[
+            ALLEGATO:[
 
                 MessageHandler(
+
                     filters.PHOTO | filters.VIDEO,
-                    
-                    foto
+
+                    allegato
+
                 ),
 
                 CallbackQueryHandler(
-                    foto
+
+                    allegato
+
                 )
 
             ],
@@ -909,11 +855,10 @@ def main():
 
 
 
-    print("⚰️ AcquaticDeaths v1.1 online")
+    print("⚰️ AcquaticDeaths v1.2 online")
 
 
     app.run_polling()
-
 
 
 
