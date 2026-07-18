@@ -1214,35 +1214,27 @@ async def decisione_staff(update, context):
 
         pubblico = (
 
-            "━━━━━━━━━━━━━━\n\n"
+    "━━━━━━━━━━━━━━\n\n"
 
-            "⚰️ NUOVA MORTE\n\n"
+    "⚰️ NUOVA MORTE\n\n"
 
-            "━━━━━━━━━━━━━━\n\n"
+    "━━━━━━━━━━━━━━\n\n"
 
-            f"👤 Deceduto:\n{morte[1]}\n\n"
+    f"👤 Deceduto: {morte[1]}\n\n"
 
-            "━━━━━━━━━━━━━━\n\n"
+    f"💼 Lavoro: {morte[2]}\n\n"
 
-            f"💼 Lavoro:\n{morte[2]}\n\n"
+    f"📝 Motivo: {morte[3]}\n\n"
 
-            "━━━━━━━━━━━━━━\n\n"
+    f"📍 Luogo: {morte[4]}\n\n"
 
-            f"📝 Motivo:\n{morte[3]}\n\n"
+    f"📅 Data: {morte[5]}\n\n"
 
-            "━━━━━━━━━━━━━━\n\n"
+    "━━━━━━━━━━━━━━\n\n"
 
-            f"📍 Luogo:\n{morte[4]}\n\n"
+    "🤖 @AcquaticDeathsBot"
 
-            "━━━━━━━━━━━━━━\n\n"
-
-            f"📅 Data:\n{morte[5]}\n\n"
-
-            "━━━━━━━━━━━━━━\n\n"
-
-            "🤖 @AcquaticDeathsBot"
-
-        )
+)
 
 
 
