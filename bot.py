@@ -513,25 +513,38 @@ async def foto(update, context):
 
     # Se arriva una vera foto
 
-    if update.message and update.message.photo:
+    if update.message and (update.message.photo or update.message.video):
 
 
-        context.user_data["foto"] = update.message.photo[-1].file_id
+    if update.message.photo:
 
-
-        await elimina_messaggio(update)
-
-
-        await mostra_conferma(
-
-            update,
-
-            context
-
+        context.user_data["allegato"] = (
+            "foto",
+            update.message.photo[-1].file_id
         )
 
 
-        return CONFERMA
+    elif update.message.video:
+
+        context.user_data["allegato"] = (
+            "video",
+            update.message.video.file_id
+        )
+
+
+    await elimina_messaggio(update)
+
+
+    await mostra_conferma(
+
+        update,
+
+        context
+
+    )
+
+
+    return CONFERMA
 
 
 
@@ -548,13 +561,21 @@ async def foto(update, context):
 async def mostra_conferma(update, context):
 
 
-    if context.user_data.get("foto"):
+    if context.user_data.get("allegato"):
 
-        stato_foto = "Ricevuta 📷"
+    tipo = context.user_data["allegato"][0]
+
+    if tipo == "foto":
+
+        stato_foto = "Foto ricevuta 📷"
 
     else:
 
-        stato_foto = "Non ricevuta ❌"
+        stato_foto = "Video ricevuto 🎥"
+
+else:
+
+    stato_foto = "Non ricevuta ❌"
 
 
 
@@ -840,17 +861,13 @@ def main():
             FOTO:[
 
                 MessageHandler(
-
-                    filters.PHOTO,
-
+                    filters.PHOTO | filters.VIDEO,
+                    
                     foto
-
                 ),
 
                 CallbackQueryHandler(
-
                     foto
-
                 )
 
             ],
