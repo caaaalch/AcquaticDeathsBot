@@ -4,6 +4,7 @@ from telegram.ext import Application, CommandHandler
 
 TOKEN = os.getenv("TOKEN")
 
+STAFF_CHANNEL = -1004388077811
 
 async def start(update: Update, context):
     await update.message.reply_text(
