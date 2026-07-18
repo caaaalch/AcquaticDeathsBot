@@ -30,7 +30,7 @@ from telegram.ext import (
 
 TOKEN = os.getenv("TOKEN")
 
-STAFF_CHANNEL = -1004357018672
+STAFF_CHANNEL = -1004388077811
 
 PUBLIC_CHANNEL = -1003993420312
 
@@ -107,6 +107,7 @@ def database():
 
 
 
+
 def crea_decesso(dati):
 
     conn = sqlite3.connect("deaths.db")
@@ -122,23 +123,14 @@ def crea_decesso(dati):
     INSERT INTO deaths (
 
         id,
-
         user_id,
-
         nome,
-
         lavoro,
-
         motivo,
-
         luogo,
-
         data,
-
         ora,
-
         allegato_tipo,
-
         allegato_id
 
     )
@@ -187,6 +179,7 @@ def crea_decesso(dati):
 
 
 
+
 # ==========================
 # START
 # ==========================
@@ -199,6 +192,7 @@ async def start(update: Update, context):
         "Usa /nuovamorte per creare una segnalazione."
 
     )
+
 
 
 
@@ -231,6 +225,7 @@ async def nuova_morte(update: Update, context):
 
 
 
+
 # ==========================
 # UTILITA'
 # ==========================
@@ -244,6 +239,7 @@ async def elimina_messaggio(update):
     except:
 
         pass
+
 
 
 
@@ -261,11 +257,14 @@ async def aggiorna_messaggio(update, context, testo):
 
 
 
+
 async def errore_temporaneo(update, testo):
 
     messaggio = await update.message.reply_text(testo)
 
+
     await asyncio.sleep(3)
+
 
     try:
 
@@ -275,7 +274,7 @@ async def errore_temporaneo(update, testo):
 
         pass
     
-# ==========================
+    # ==========================
 # NOME
 # ==========================
 
@@ -317,50 +316,19 @@ async def lavoro(update, context):
 
     tastiera = [
 
-        [
-            InlineKeyboardButton(
-                "🔫 Sparatoria",
-                callback_data="Sparatoria"
-            )
-        ],
+        [InlineKeyboardButton("🔫 Sparatoria", callback_data="Sparatoria")],
 
-        [
-            InlineKeyboardButton(
-                "🗡️ Omicidio",
-                callback_data="Omicidio"
-            )
-        ],
+        [InlineKeyboardButton("🗡️ Omicidio", callback_data="Omicidio")],
 
-        [
-            InlineKeyboardButton(
-                "👮 Abbattimento FdO",
-                callback_data="Abbattimento FdO"
-            )
-        ],
+        [InlineKeyboardButton("👮 Abbattimento FdO", callback_data="Abbattimento FdO")],
 
-        [
-            InlineKeyboardButton(
-                "🪂 Caduta",
-                callback_data="Caduta"
-            )
-        ],
+        [InlineKeyboardButton("🪂 Caduta", callback_data="Caduta")],
 
-        [
-            InlineKeyboardButton(
-                "🔥 Incendio",
-                callback_data="Incendio"
-            )
-        ],
+        [InlineKeyboardButton("🔥 Incendio", callback_data="Incendio")],
 
-        [
-            InlineKeyboardButton(
-                "❓ Sconosciuta",
-                callback_data="Sconosciuta"
-            )
-        ]
+        [InlineKeyboardButton("❓ Sconosciuta", callback_data="Sconosciuta")]
 
     ]
-
 
 
     await context.bot.edit_message_text(
@@ -531,6 +499,7 @@ async def ora(update, context):
 
     if not controllo:
 
+
         await elimina_messaggio(update)
 
 
@@ -559,8 +528,11 @@ async def ora(update, context):
         [
 
             InlineKeyboardButton(
+
                 "📎 Invia foto/video",
+
                 callback_data="INVIA_ALLEGATO"
+
             )
 
         ],
@@ -568,8 +540,11 @@ async def ora(update, context):
         [
 
             InlineKeyboardButton(
+
                 "⏭️ Salta allegato",
+
                 callback_data="SALTA_ALLEGATO"
+
             )
 
         ]
@@ -615,9 +590,12 @@ async def allegato(update, context):
 
         await query.answer()
 
+
         context.user_data["allegato"] = None
 
+
         await mostra_conferma(update, context)
+
 
         return CONFERMA
 
@@ -666,7 +644,6 @@ async def allegato(update, context):
             )
 
 
-
         await elimina_messaggio(update)
 
 
@@ -680,7 +657,7 @@ async def allegato(update, context):
     return ALLEGATO
 
 # ==========================
-# CONFERMA
+# RIEPILOGO
 # ==========================
 
 async def mostra_conferma(update, context):
@@ -688,11 +665,9 @@ async def mostra_conferma(update, context):
     if context.user_data.get("allegato"):
 
         if context.user_data["allegato"][0] == "foto":
-
             stato = "Foto ricevuta 📷"
 
         else:
-
             stato = "Video ricevuto 🎥"
 
     else:
@@ -720,6 +695,7 @@ async def mostra_conferma(update, context):
     )
 
 
+
     tastiera = [
 
         [
@@ -737,6 +713,7 @@ async def mostra_conferma(update, context):
         ]
 
     ]
+
 
 
     await context.bot.edit_message_text(
@@ -780,102 +757,80 @@ async def conferma(update, context):
 
 
 
-    if query.data == "INVIA":
-
-
-        death_id = crea_decesso(context.user_data)
+    death_id = crea_decesso(context.user_data)
 
 
 
-        testo = (
+    testo = (
 
-            "⚰️ NUOVA SEGNALAZIONE\n\n"
+        "⚰️ NUOVA SEGNALAZIONE\n\n"
 
-            f"🆔 ID: {death_id}\n\n"
+        f"🆔 ID: {death_id}\n\n"
 
-            f"👤 Deceduto: {context.user_data['nome']}\n"
-            f"💼 Lavoro: {context.user_data['lavoro']}\n"
-            f"📝 Motivo: {context.user_data['motivo']}\n"
-            f"📍 Luogo: {context.user_data['luogo']}\n"
-            f"📅 Data: {context.user_data['data']}\n"
-            f"🕒 Ora: {context.user_data['ora']}\n"
+        f"👤 Deceduto: {context.user_data['nome']}\n"
+        f"💼 Lavoro: {context.user_data['lavoro']}\n"
+        f"📝 Motivo: {context.user_data['motivo']}\n"
+        f"📍 Luogo: {context.user_data['luogo']}\n"
+        f"📅 Data: {context.user_data['data']}\n"
+        f"🕒 Ora: {context.user_data['ora']}\n"
 
-        )
+    )
 
 
 
-        tastiera = [
+    tastiera = [
 
-            [
+        [
 
-                InlineKeyboardButton(
-                    "✅ APPROVA",
-                    callback_data=f"APPROVA_{death_id}"
-                ),
+            InlineKeyboardButton(
+                "✅ APPROVA",
+                callback_data=f"APPROVA_{death_id}"
+            ),
 
-                InlineKeyboardButton(
-                    "❌ RIFIUTA",
-                    callback_data=f"RIFIUTA_{death_id}"
-                )
-
-            ]
+            InlineKeyboardButton(
+                "❌ RIFIUTA",
+                callback_data=f"RIFIUTA_{death_id}"
+            )
 
         ]
 
-
-
-        allegato = context.user_data.get("allegato")
-
-
-
-        if allegato:
-
-
-            tipo, file_id = allegato
+    ]
 
 
 
-            if tipo == "foto":
+    allegato = context.user_data.get("allegato")
 
 
-                await context.bot.send_photo(
 
-                    chat_id=STAFF_CHANNEL,
+    if allegato:
 
-                    photo=file_id,
-
-                    caption=testo,
-
-                    reply_markup=InlineKeyboardMarkup(tastiera)
-
-                )
+        tipo, file_id = allegato
 
 
-            else:
+        if tipo == "foto":
 
+            await context.bot.send_photo(
 
-                await context.bot.send_video(
+                chat_id=STAFF_CHANNEL,
 
-                    chat_id=STAFF_CHANNEL,
+                photo=file_id,
 
-                    video=file_id,
+                caption=testo,
 
-                    caption=testo,
+                reply_markup=InlineKeyboardMarkup(tastiera)
 
-                    reply_markup=InlineKeyboardMarkup(tastiera)
-
-                )
-
+            )
 
 
         else:
 
-
-            await context.bot.send_message(
+            await context.bot.send_video(
 
                 chat_id=STAFF_CHANNEL,
 
-                text=testo,
+                video=file_id,
+
+                caption=testo,
 
                 reply_markup=InlineKeyboardMarkup(tastiera)
 
@@ -883,26 +838,36 @@ async def conferma(update, context):
 
 
 
-        await query.edit_message_text(
+    else:
 
-            "✅ Segnalazione inviata allo staff."
+        await context.bot.send_message(
+
+            chat_id=STAFF_CHANNEL,
+
+            text=testo,
+
+            reply_markup=InlineKeyboardMarkup(tastiera)
 
         )
 
 
-        context.user_data.clear()
+
+    await query.edit_message_text(
+        "✅ Segnalazione inviata allo staff."
+    )
 
 
-        return ConversationHandler.END
+    context.user_data.clear()
 
 
+    return ConversationHandler.END
 
 
 
 
 
 # ==========================
-# APPROVA / RIFIUTA STAFF
+# DECISIONE STAFF
 # ==========================
 
 async def decisione_staff(update, context):
@@ -910,6 +875,17 @@ async def decisione_staff(update, context):
     query = update.callback_query
 
     await query.answer()
+
+
+
+    if query.data == "gia_deciso":
+
+        await query.answer(
+            "Questa segnalazione è già stata valutata.",
+            show_alert=True
+        )
+
+        return
 
 
 
@@ -940,6 +916,7 @@ async def decisione_staff(update, context):
     )
 
 
+
     morte = cursor.fetchone()
 
 
@@ -953,6 +930,19 @@ async def decisione_staff(update, context):
 
 
     user_id = morte[0]
+
+
+
+    nome_staff = update.effective_user.username
+
+
+    if nome_staff:
+
+        staff = f"@{nome_staff}"
+
+    else:
+
+        staff = update.effective_user.first_name
 
 
 
@@ -983,6 +973,20 @@ async def decisione_staff(update, context):
         )
 
 
+        bottone = "✅ APPROVATA"
+
+
+
+        await context.bot.send_message(
+
+            chat_id=user_id,
+
+            text="✅ La tua segnalazione è stata approvata dallo staff."
+
+        )
+
+
+
         if morte[7] == "foto":
 
             await context.bot.send_photo(
@@ -998,7 +1002,6 @@ async def decisione_staff(update, context):
 
         elif morte[7] == "video":
 
-
             await context.bot.send_video(
 
                 chat_id=PUBLIC_CHANNEL,
@@ -1012,7 +1015,6 @@ async def decisione_staff(update, context):
 
         else:
 
-
             await context.bot.send_message(
 
                 chat_id=PUBLIC_CHANNEL,
@@ -1023,21 +1025,7 @@ async def decisione_staff(update, context):
 
 
 
-        await context.bot.send_message(
-
-            chat_id=user_id,
-
-            text="✅ La tua segnalazione è stata approvata dallo staff."
-
-        )
-
-
-        await query.edit_message_text(
-
-            query.message.caption + "\n\n✅ APPROVATA"
-
-        )
-
+        nuovo_testo = query.message.caption + f"\n\n✅ APPROVATA da {staff}"
 
 
 
@@ -1053,6 +1041,10 @@ async def decisione_staff(update, context):
         )
 
 
+        bottone = "❌ RIFIUTATA"
+
+
+
         await context.bot.send_message(
 
             chat_id=user_id,
@@ -1062,17 +1054,55 @@ async def decisione_staff(update, context):
         )
 
 
-        await query.edit_message_text(
 
-            query.message.caption + "\n\n❌ RIFIUTATA"
+        nuovo_testo = query.message.caption + f"\n\n❌ RIFIUTATA da {staff}"
 
-        )
 
 
 
     conn.commit()
 
     conn.close()
+
+
+
+    tastiera = [
+
+        [
+
+            InlineKeyboardButton(
+
+                bottone,
+
+                callback_data="gia_deciso"
+
+            )
+
+        ]
+
+    ]
+
+
+
+    if query.message.photo:
+
+        await query.edit_message_caption(
+
+            caption=nuovo_testo,
+
+            reply_markup=InlineKeyboardMarkup(tastiera)
+
+        )
+
+    else:
+
+        await query.edit_message_text(
+
+            text=nuovo_testo,
+
+            reply_markup=InlineKeyboardMarkup(tastiera)
+
+        )
 
 
 
@@ -1087,6 +1117,7 @@ def main():
     database()
 
 
+
     app = Application.builder().token(TOKEN).build()
 
 
@@ -1096,11 +1127,8 @@ def main():
         entry_points=[
 
             CommandHandler(
-
                 "nuovamorte",
-
                 nuova_morte
-
             )
 
         ],
@@ -1170,13 +1198,12 @@ def main():
 
 
     app.add_handler(
-
         CommandHandler(
             "start",
             start
         )
-
     )
+
 
 
     app.add_handler(conversazione)
@@ -1197,10 +1224,24 @@ def main():
 
 
 
-    print("⚰️ AcquaticDeaths v1.4 online")
+    app.add_handler(
 
+        CallbackQueryHandler(
+
+            decisione_staff,
+
+            pattern="^gia_deciso$"
+
+        )
+
+    )
+
+
+
+    print("⚰️ AcquaticDeaths v1.5 online")
 
     app.run_polling()
+
 
 
 
