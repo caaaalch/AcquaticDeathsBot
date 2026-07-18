@@ -45,7 +45,6 @@ NOME, LAVORO, MOTIVO, LUOGO, DATA, ORA, ALLEGATO, CONFERMA = range(8)
 
 
 
-
 # ==========================
 # GENERATORE ID
 # ==========================
@@ -61,17 +60,18 @@ def genera_id():
 
 
 
-
-
 # ==========================
 # CONTROLLO TESTO
 # ==========================
 
 def solo_lettere(testo):
 
-    return testo.replace(" ", "").isalpha()
-
-
+    return bool(
+        re.fullmatch(
+            r"[A-Za-zÀ-ÖØ-öø-ÿ ]+",
+            testo.strip()
+        )
+    )
 
 
 
@@ -123,7 +123,9 @@ def database():
 
 
 
-
+# ==========================
+# CREAZIONE DECESSO
+# ==========================
 
 def crea_decesso(dati):
 
@@ -196,8 +198,6 @@ def crea_decesso(dati):
 
 
 
-
-
 # ==========================
 # START
 # ==========================
@@ -210,8 +210,6 @@ async def start(update: Update, context):
         "Usa /nuovamorte per creare una segnalazione."
 
     )
-
-
 
 
 
@@ -242,10 +240,6 @@ async def nuova_morte(update: Update, context):
 
     return NOME
 
-
-
-
-
 # ==========================
 # UTILITA'
 # ==========================
@@ -253,14 +247,10 @@ async def nuova_morte(update: Update, context):
 async def elimina_messaggio(update):
 
     try:
-
         await update.message.delete()
 
     except:
-
         pass
-
-
 
 
 
@@ -278,24 +268,20 @@ async def aggiorna_messaggio(update, context, testo):
 
 
 
-
-
 async def errore_temporaneo(update, testo):
 
     messaggio = await update.message.reply_text(testo)
 
-
     await asyncio.sleep(3)
 
-
     try:
-
         await messaggio.delete()
 
     except:
-
         pass
-    
+
+
+
 # ==========================
 # NOME
 # ==========================
@@ -324,15 +310,13 @@ async def nome(update, context):
 
 
 
-
-
 # ==========================
 # LAVORO
 # ==========================
 
 async def lavoro(update, context):
 
-    testo = update.message.text
+    testo = update.message.text.strip()
 
 
     if not solo_lettere(testo):
@@ -343,7 +327,7 @@ async def lavoro(update, context):
 
             update,
 
-            "❌ Il lavoro può contenere solo lettere."
+            "❌ Il lavoro può contenere solamente lettere."
 
         )
 
@@ -405,7 +389,6 @@ async def lavoro(update, context):
     ]
 
 
-
     await context.bot.edit_message_text(
 
         chat_id=update.effective_chat.id,
@@ -425,8 +408,6 @@ async def lavoro(update, context):
 
 
     return MOTIVO
-
-
 
 
 
@@ -462,34 +443,28 @@ async def motivo(update, context):
 
 
 
-
-
 # ==========================
 # LUOGO
 # ==========================
 
 async def luogo(update, context):
 
-    testo = update.message.text
-
+    testo = update.message.text.strip()
 
 
     if not solo_lettere(testo):
 
         await elimina_messaggio(update)
 
-
         await errore_temporaneo(
 
             update,
 
-            "❌ Il luogo può contenere solo lettere."
+            "❌ Il luogo può contenere solamente lettere."
 
         )
 
-
         return LUOGO
-
 
 
 
@@ -521,16 +496,13 @@ async def luogo(update, context):
 
 
 
-
-
 # ==========================
 # DATA
 # ==========================
 
 async def data(update, context):
 
-    testo = update.message.text
-
+    testo = update.message.text.strip()
 
 
     try:
@@ -546,32 +518,23 @@ async def data(update, context):
 
     except ValueError:
 
-
         await elimina_messaggio(update)
-
 
         await errore_temporaneo(
 
             update,
 
-            "❌ Data non valida.\n\n"
-            "Formato corretto:\n"
-            "GG/MM/AAAA"
+            "❌ Data non valida.\nFormato corretto: GG/MM/AAAA"
 
         )
-
 
         return DATA
 
 
 
-
-
     if data_inserita.date() > datetime.now().date():
 
-
         await elimina_messaggio(update)
-
 
         await errore_temporaneo(
 
@@ -581,10 +544,7 @@ async def data(update, context):
 
         )
 
-
         return DATA
-
-
 
 
 
@@ -592,7 +552,6 @@ async def data(update, context):
 
 
     context.user_data["data"] = testo
-
 
 
 
@@ -613,47 +572,34 @@ async def data(update, context):
 
     return ORA
 
-
-
-
-
 # ==========================
 # ORA
 # ==========================
 
 async def ora(update, context):
 
-    testo = update.message.text
-
+    testo = update.message.text.strip()
 
 
     controllo = re.match(
-
         r"^([01][0-9]|2[0-3]):[0-5][0-9]$",
-
         testo
-
     )
-
 
 
     if not controllo:
 
-
         await elimina_messaggio(update)
-
 
         await errore_temporaneo(
 
             update,
 
-            "❌ Ora non valida.\nFormato HH:MM"
+            "❌ Ora non valida.\nFormato corretto: HH:MM"
 
         )
 
-
         return ORA
-
 
 
 
@@ -667,31 +613,20 @@ async def ora(update, context):
     tastiera = [
 
         [
-
             InlineKeyboardButton(
-
                 "📎 Invia foto/video",
-
                 callback_data="INVIA_ALLEGATO"
-
             )
-
         ],
 
         [
-
             InlineKeyboardButton(
-
                 "⏭️ Salta allegato",
-
                 callback_data="SALTA_ALLEGATO"
-
             )
-
         ]
 
     ]
-
 
 
     await context.bot.edit_message_text(
@@ -714,6 +649,9 @@ async def ora(update, context):
 
     return ALLEGATO
 
+
+
+
 # ==========================
 # ALLEGATO
 # ==========================
@@ -723,31 +661,33 @@ async def allegato(update, context):
     query = update.callback_query
 
 
-
-    if query and query.data == "SALTA_ALLEGATO":
-
-        await query.answer()
-
-        context.user_data["allegato"] = None
-
-        await mostra_conferma(update, context)
-
-        return CONFERMA
-
-
-
-
-    if query and query.data == "INVIA_ALLEGATO":
+    if query:
 
         await query.answer()
 
-        await query.edit_message_text(
-            "📎 Invia ora foto o video del decesso."
-        )
 
-        return ALLEGATO
+        if query.data == "SALTA_ALLEGATO":
+
+            context.user_data["allegato"] = None
+
+            await mostra_conferma(
+                update,
+                context
+            )
+
+            return CONFERMA
 
 
+
+        if query.data == "INVIA_ALLEGATO":
+
+            await query.edit_message_text(
+
+                "📎 Invia ora foto o video del decesso."
+
+            )
+
+            return ALLEGATO
 
 
 
@@ -762,28 +702,27 @@ async def allegato(update, context):
             context.user_data["allegato"] = (
 
                 "foto",
-
                 update.message.photo[-1].file_id
 
             )
-
 
         else:
 
             context.user_data["allegato"] = (
 
                 "video",
-
                 update.message.video.file_id
 
             )
 
 
-
         await elimina_messaggio(update)
 
 
-        await mostra_conferma(update, context)
+        await mostra_conferma(
+            update,
+            context
+        )
 
 
         return CONFERMA
@@ -795,32 +734,28 @@ async def allegato(update, context):
 
 
 
-
 # ==========================
 # RIEPILOGO
-# =========================
+# ==========================
 
 async def mostra_conferma(update, context):
 
 
-    if context.user_data.get("allegato"):
+    allegato = context.user_data.get("allegato")
+
+
+    if allegato:
 
         stato = (
-
             "Foto ricevuta 📷"
-
-            if context.user_data["allegato"][0] == "foto"
-
+            if allegato[0] == "foto"
             else
-
             "Video ricevuto 🎥"
-
         )
 
     else:
 
-        stato = "Non ricevuto ❌"
-
+        stato = "Nessun allegato ❌"
 
 
 
@@ -855,18 +790,13 @@ async def mostra_conferma(update, context):
     )
 
 
-
-
     tastiera = [
 
         [
 
             InlineKeyboardButton(
-
                 "✅ Invia",
-
                 callback_data="INVIA"
-
             )
 
         ],
@@ -874,17 +804,13 @@ async def mostra_conferma(update, context):
         [
 
             InlineKeyboardButton(
-
                 "❌ Annulla",
-
                 callback_data="ANNULLA"
-
             )
 
         ]
 
     ]
-
 
 
     await context.bot.edit_message_text(
@@ -903,8 +829,6 @@ async def mostra_conferma(update, context):
 
 
 
-
-
 # ==========================
 # CONFERMA INVIO
 # ==========================
@@ -914,7 +838,6 @@ async def conferma(update, context):
     query = update.callback_query
 
     await query.answer()
-
 
 
     if query.data == "ANNULLA":
@@ -929,10 +852,9 @@ async def conferma(update, context):
 
 
 
-
-
-    death_id = crea_decesso(context.user_data)
-
+    death_id = crea_decesso(
+        context.user_data
+    )
 
 
     testo = (
@@ -959,30 +881,27 @@ async def conferma(update, context):
 
 
 
-    tastiera = [
+    tastiera = InlineKeyboardMarkup(
 
         [
 
-            InlineKeyboardButton(
+            [
 
-                "✅ APPROVA",
+                InlineKeyboardButton(
+                    "✅ APPROVA",
+                    callback_data=f"APPROVA_{death_id}"
+                ),
 
-                callback_data=f"APPROVA_{death_id}"
+                InlineKeyboardButton(
+                    "❌ RIFIUTA",
+                    callback_data=f"RIFIUTA_{death_id}"
+                )
 
-            ),
-
-            InlineKeyboardButton(
-
-                "❌ RIFIUTA",
-
-                callback_data=f"RIFIUTA_{death_id}"
-
-            )
+            ]
 
         ]
 
-    ]
-
+    )
 
 
     allegato = context.user_data.get("allegato")
@@ -1004,7 +923,7 @@ async def conferma(update, context):
 
                 caption=testo,
 
-                reply_markup=InlineKeyboardMarkup(tastiera)
+                reply_markup=tastiera
 
             )
 
@@ -1018,10 +937,9 @@ async def conferma(update, context):
 
                 caption=testo,
 
-                reply_markup=InlineKeyboardMarkup(tastiera)
+                reply_markup=tastiera
 
             )
-
 
     else:
 
@@ -1031,7 +949,7 @@ async def conferma(update, context):
 
             testo,
 
-            reply_markup=InlineKeyboardMarkup(tastiera)
+            reply_markup=tastiera
 
         )
 
@@ -1046,7 +964,6 @@ async def conferma(update, context):
 
 
     return ConversationHandler.END
-
 
 
 
@@ -1074,13 +991,9 @@ async def decisione_staff(update, context):
     cursor.execute(
 
         """
-
         SELECT user_id,nome,lavoro,motivo,luogo,data,ora,allegato_tipo,allegato_id
-
         FROM deaths
-
         WHERE id=?
-
         """,
 
         (death_id,)
@@ -1097,7 +1010,6 @@ async def decisione_staff(update, context):
         conn.close()
 
         return
-
 
 
 
@@ -1119,13 +1031,11 @@ async def decisione_staff(update, context):
 
         stato = "approvato"
 
-
     else:
 
         risultato = "❌ RIFIUTATA"
 
         stato = "rifiutato"
-
 
 
 
@@ -1144,24 +1054,6 @@ async def decisione_staff(update, context):
 
 
 
-
-    try:
-
-        await context.bot.send_message(
-
-            morte[0],
-
-            f"{risultato} dallo staff.\n\nDecisione presa da {staff}"
-
-        )
-
-    except:
-
-        pass
-
-
-
-
     nuovo_testo = (
 
         query.message.caption
@@ -1177,15 +1069,15 @@ async def decisione_staff(update, context):
 
 
 
-    # NESSUN BOTTONE QUI
-
-
+    # RIMOZIONE DEFINITIVA BOTTONI
 
     if query.message.photo or query.message.video:
 
         await query.edit_message_caption(
 
-            caption=nuovo_testo
+            caption=nuovo_testo,
+
+            reply_markup=None
 
         )
 
@@ -1193,7 +1085,9 @@ async def decisione_staff(update, context):
 
         await query.edit_message_text(
 
-            text=nuovo_testo
+            text=nuovo_testo,
+
+            reply_markup=None
 
         )
 
@@ -1265,3 +1159,131 @@ async def decisione_staff(update, context):
                 pubblico
 
             )
+
+
+
+# ==========================
+# AVVIO BOT
+# ==========================
+
+def main():
+
+    database()
+
+
+    app = Application.builder().token(TOKEN).build()
+
+
+
+    conv = ConversationHandler(
+
+        entry_points=[
+
+            CommandHandler(
+                "nuovamorte",
+                nuova_morte
+            )
+
+        ],
+
+        states={
+
+            NOME:[
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    nome
+                )
+            ],
+
+            LAVORO:[
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    lavoro
+                )
+            ],
+
+            MOTIVO:[
+                CallbackQueryHandler(
+                    motivo
+                )
+            ],
+
+            LUOGO:[
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    luogo
+                )
+            ],
+
+            DATA:[
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    data
+                )
+            ],
+
+            ORA:[
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    ora
+                )
+            ],
+
+            ALLEGATO:[
+                CallbackQueryHandler(
+                    allegato
+                ),
+                MessageHandler(
+                    filters.PHOTO | filters.VIDEO,
+                    allegato
+                )
+            ],
+
+            CONFERMA:[
+                CallbackQueryHandler(
+                    conferma
+                )
+            ]
+
+        },
+
+        fallbacks=[]
+
+    )
+
+
+    app.add_handler(
+        CommandHandler(
+            "start",
+            start
+        )
+    )
+
+
+    app.add_handler(conv)
+
+
+    app.add_handler(
+
+        CallbackQueryHandler(
+
+            decisione_staff,
+
+            pattern=r"^(APPROVA|RIFIUTA)_"
+
+        )
+
+    )
+
+
+
+    print("Bot avviato")
+
+
+    app.run_polling()
+
+
+
+if __name__ == "__main__":
+
+    main()
