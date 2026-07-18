@@ -24,7 +24,7 @@ from telegram.ext import (
 
 TOKEN = os.getenv("TOKEN")
 
-STAFF_CHANNEL = -100XXXXXXXXXX
+STAFF_CHANNEL = -1004388077811
 
 
 # ==========================
