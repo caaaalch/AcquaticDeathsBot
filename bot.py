@@ -29,7 +29,7 @@ async def nuova_morte(update: Update, context):
 
     return NOME
 
- async def nome(update, context):
+async def nome(update, context):
 
     context.user_data["nome"] = update.message.text
 
