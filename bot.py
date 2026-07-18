@@ -798,7 +798,7 @@ async def allegato(update, context):
 
 # ==========================
 # RIEPILOGO
-# ==========================
+# =========================
 
 async def mostra_conferma(update, context):
 
