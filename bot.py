@@ -1139,7 +1139,7 @@ async def decisione_staff(update, context):
 
             chat_id=morte[0],
 
-            text=f"{risultato} dallo staff."
+            text=f"La tua segnalazione e' stata {risultato} dallo staff."
 
         )
 
